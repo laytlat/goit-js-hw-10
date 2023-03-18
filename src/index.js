@@ -1,6 +1,7 @@
 import './css/styles.css';
 import debounce from 'lodash.debounce';
 import { fetchCountries } from './fetchCountries';
+import Notiflix from 'notiflix';
 
 const DEBOUNCE_DELAY = 300;
 const countryInput = document.querySelector('#search-box');
@@ -12,12 +13,21 @@ countryInput.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 function onSearch(e) {
   fetchCountries(e)
     .then(data => {
+      if (data.length > 10) {
+        Notiflix.Notify.info(
+          'Too many matches found. Please enter a more specific name.'
+        );
+        return;
+      }
       if (data.length > 1) {
         renderCountriesList(data);
         return;
       }
       renderFinalCountry(data);
     })
+    .catch(error =>
+      Notiflix.Notify.failure('Oops, there is no country with that name')
+    )
     .finally(clearPage());
 }
 
