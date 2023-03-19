@@ -11,6 +11,10 @@ const countriesList = document.querySelector('.country-list');
 countryInput.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 function onSearch(e) {
+  if (e.target.value.trim() === '') {
+    clearPage();
+    return;
+  }
   fetchCountries(e)
     .then(data => {
       if (data.length > 10) {
